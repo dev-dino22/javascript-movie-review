@@ -186,7 +186,7 @@ class MovieLayout {
     if (__privateGet(this, _state).movieData.length === 0) {
       return `
             <div class="flex-center gap-16">
-                <img src="../public/images/hangsung.png" />
+                <img src="./images/hangsung.png" />
                 <div class="text-xl">검색 결과가 없습니다.</div>
             </div>
             `;
@@ -196,7 +196,12 @@ class MovieLayout {
             <div id="movieListContainer">
                 ${MovieList(__privateGet(this, _state).movieData).template().outerHTML}
             </div>
-            ${__privateGet(this, _state).isPossibleMore ? Button({ content: "더보기", eventName: __privateGet(this, _state).eventName, type: "t", width: "100%" }) : ""}
+            ${__privateGet(this, _state).isPossibleMore ? Button({
+      content: "더보기",
+      eventName: __privateGet(this, _state).eventName,
+      type: "t",
+      width: "100%"
+    }) : ""}
         `;
   }
   render() {
@@ -296,7 +301,7 @@ function Banner(data) {
         <div class="overlay" aria-hidden="true"></div>
           <div class="top-rated-movie">
             <div class="rate">
-              <img src="./public/images/star_empty.png" class="star" />
+              <img src="./images/star_empty.png" class="star" />
               <span class="rate-value">${roundRating(data.vote_average)}</span>
             </div>
             <div class="title">${data.title}</div>
