@@ -36,6 +36,9 @@
 .ml-48 {
   margin-left: 48px;
 }
+.mt-48 {
+  margin-top: 100px;
+}
 * {
   box-sizing: border-box;
   font-family: 'Pretendard Variable', Pretendard, BlinkMacSystemFont, system-ui, Roboto,
