@@ -55,16 +55,19 @@ function SearchForm() {
 function Header() {
   function template() {
     return `
-        <a href="/javascript-movie-review/" class="logo">
+        <div class="header-container">
+        <a href="/javascript-movie-review/" class="header-logo">
             <img src="./images/logo.png" alt="MovieList" />
         </a>
-        <div class="header-container">
             ${SearchForm()}
+            <img src="./images/logo.png" alt="MovieList" class="header-transparent-logo" />
+        </div>
+        <div id="headerBackground" class="header-background">
         </div>
     `;
   }
   function render() {
-    document.querySelector("header").innerHTML = template();
+    document.querySelector("#headerSection").innerHTML = template();
   }
   render();
 }
@@ -329,7 +332,11 @@ function ModalLayout() {
           <div class="modal-image">
             <img id="posterImage" class="poster-image" src="" alt="" />
           </div>
+          
           <div class="modal-content">
+
+          <div class="movie-content-title-box">
+
             <h2 id="movieTitle" class="movie-title">-</h2>
             <p class="movie-info">
             <span id="releaseDate">2024</span>
@@ -344,6 +351,8 @@ function ModalLayout() {
                 <span class="rating-number">0</span>
               </div>
             </div>
+
+          </div>
             <div id="starRatingFormBox">
            
             </div>
@@ -507,7 +516,7 @@ function MovieLayout(movieData) {
             `;
     }
     return `
-            <h2 id="movieListTitle" class="text-xl">${state.title}</h2>
+            <h2 id="movieListTitle" class="text-xl my-36 ml-48">${state.title}</h2>
             <div id="movieListContainer">
                 
             </div>
@@ -599,4 +608,13 @@ function Banner(data) {
   if (bannerElement) bannerElement.innerHTML = Banner(movieData.results[0]);
   await submitEvent(movieLayout);
   Header();
+  window.addEventListener("scroll", () => {
+    const headerBack = document.querySelector("#headerBackground");
+    if (!headerBack) return;
+    if (window.scrollY > 400) {
+      headerBack.classList.add("scrolled");
+    } else {
+      headerBack.classList.remove("scrolled");
+    }
+  });
 })();

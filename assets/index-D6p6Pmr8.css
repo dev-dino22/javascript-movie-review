@@ -15,14 +15,26 @@
   --color-ffffff: #ffffff;
   --color-242a32: #242a32;
 }
+:root {
+  --breakpoint-mobile: 480px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-4k: 1440px;
+}
 .flex-center {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .gap-16 {
-    gap: 16px;
+  gap: 16px;
+}
+.my-36 {
+  margin: 36px 0;
+}
+.ml-48 {
+  margin-left: 48px;
 }
 * {
   box-sizing: border-box;
@@ -37,11 +49,6 @@
 a {
   color: inherit;
   text-decoration: none;
-}
-header {
-  width: 100%;
-  position: relative;
-  z-index: 3;
 }
 .skeleton-loading {
   height: 100%;
@@ -68,21 +75,6 @@ header {
     background-position: -100% 0;
   }
 }
-.header-container {
-  top: 20px;
-  position: fixed;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-a.logo {
-  position: fixed;
-  top: 26px;
-  margin-left: 50px;
-  cursor: pointer;
-  z-index: 500;
-}
 /* h1.logo {
   margin-right: auto;
   font-size: 2rem;
@@ -100,9 +92,6 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
-main {
-  margin: 64px 0;
 }
 .star {
   width: 24px;
@@ -129,27 +118,9 @@ button.primary {
   margin-bottom: 32px;
 }
 .container {
-  max-width: 1280px;
-  margin: 0 auto;
-}
-.background-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-  background-position: center center;
-  background-size: cover;
-  height: 600px;
-  padding: 48px;
-}
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  z-index: 1;
-
-  background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+  max-width: 1440px;
+  margin: 0 auto;
 }
 .top-rated-container {
   display: flex;
@@ -160,40 +131,6 @@ button.primary {
   z-index: 2;
   max-width: 1280px;
   margin: 0 auto;
-}
-.top-rated-movie {
-  z-index: 3;
-}
-.top-rated-movie > *:not(:last-child) {
-  margin-bottom: 8px;
-}
-.rate {
-  display: flex;
-  align-items: baseline;
-  color: var(--color-yellow);
-  margin: 4px 0;
-}
-.rate > img {
-  position: relative;
-  top: 2px;
-}
-span.rate-value {
-  margin-left: 8px;
-  font-weight: bold;
-  font-size: 1.66rem;
-}
-.title {
-  font-size: 3rem;
-  font-weight: bold;
-}
-.banner-logo-box {
-  width: 300px; /* 또는 100% */
-  overflow: hidden;
-}
-.banner-logo-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 footer.footer {
   min-height: 180px;
@@ -207,8 +144,68 @@ footer.footer {
 footer.footer p:not(:last-child) {
   margin-bottom: 8px;
 }
+.observer-trigger {
+  width: 100%;
+  height: 1px;
+  margin-top: 40px;
+  display: block;
+}
+header {
+  width: 100%;
+  position: relative;
+  z-index: 3;
+}
+#headerSection {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.header-background {
+  width: 100%;
+  position: fixed;
+  height: 100px;
+  z-index: 10;
+  backdrop-filter: blur(0px);
+  background: linear-gradient(
+    to bottom,
+    rgba(36, 42, 50, 0),
+    rgba(36, 42, 50, 0),
+    rgba(36, 42, 50, 0)
+  );
+}
+.header-background.scrolled {
+  backdrop-filter: blur(2px);
+  background: linear-gradient(
+    to bottom,
+    rgba(36, 42, 50, 0.8),
+    rgba(36, 42, 50, 0.5),
+    rgba(36, 42, 50, 0)
+  );
+}
+.header-container {
+  top: 20px;
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1440px;
+  padding: 0 36px;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 500;
+}
+.header-logo {
+  cursor: pointer;
+  z-index: 500;
+}
+.header-transparent-logo {
+  display: none;
+  visibility: hidden;
+}
 .search-input-box {
-  width: 525px;
+  width: 100%;
+  max-width: 525px;
   height: 36px;
 
   display: flex;
@@ -230,66 +227,125 @@ input {
 input::placeholder {
   color: var(--color-white);
 }
+/* 데스크탑 이상 (1024px~) */
+@media (min-width: 1024px) {
+  #headerSection {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .header-container {
+    top: 20px;
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1440px;
+    padding: 0 36px;
+  }
+
+  .header-transparent-logo {
+    display: block;
+    visibility: hidden;
+  }
+}
 #bannerSection {
   display: block;
 }
-.observer-trigger {
-  width: 100%;
-  height: 1px;
-  margin-top: 40px;
-  display: block;
+.title {
+  font-size: 3rem;
+  font-weight: bold;
 }
-/* .modal {
-    display: none;
-  }
-  
-  .modal--open {
-    display: block;
-  } */
-/* .modal-container {
-  width: 390px;
-  max-height: 800px;
-  padding: 32px 16px;
-  border-radius: 8px 8px 0px 0px;
-  background: var(--grey-100);
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-} */
-.modal-title {
-  margin-bottom: 36px;
+.banner-logo-box {
+  width: 300px; /* 또는 100% */
+  overflow: hidden;
 }
-/* .modal-container {
-  backdrop-filter: blur(8px);
-  background-color: #00000080;
+.banner-logo-box img {
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  object-fit: cover;
+  margin-top: 30px;
+}
+.background-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: fixed;
+  position: relative;
+  background-position: center center;
+  background-size: cover;
+  height: calc(100vh / 1.8);
+  padding: 48px;
+}
+.overlay {
+  position: absolute;
   top: 0;
   left: 0;
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-} */
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+
+  background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+}
+.top-rated-movie {
+  z-index: 3;
+  width: 100%;
+  max-width: 1440px;
+}
+.top-rated-movie > *:not(:last-child) {
+  margin-bottom: 8px;
+}
+.rate {
+  display: flex;
+  align-items: baseline;
+  color: var(--color-yellow);
+  margin: 4px 0;
+}
+.rate > img {
+  position: relative;
+  top: 2px;
+}
+span.rate-value {
+  margin-left: 8px;
+  font-weight: bold;
+  font-size: 1.66rem;
+}
+@media (min-width: 1024px) {
+  .banner-logo-box img {
+    margin-top: 0;
+  }
+}
+.modal-title {
+  margin-bottom: 36px;
+}
 .modal-dialog::backdrop {
   backdrop-filter: blur(8px);
   background-color: #00000080;
 }
 .modal-dialog {
   background-color: #2d3748;
-  width: 90%;
-  max-width: 800px;
+  width: 100%;
   overflow: hidden;
   color: white;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-  border-radius: 16px;
+  border-radius: 16px 16px 0 0;
+  padding: 0;
+  margin: 0;
+  bottom: 0;
+  position: fixed;
+  max-width: 100%;
+  heigth: 600px;
+  margin-top: calc(100vh - 600px);
 }
 .modal-container {
   display: flex;
-  border-radius: 10px;
+  flex-direction: column;
+  border-radius: 0px;
   padding: 24px;
   gap: 24px;
+  height: 600px;
 }
 .modal-close {
   position: absolute;
@@ -303,10 +359,16 @@ input::placeholder {
 .modal-close:hover {
   opacity: 1;
 }
+.modal-content-box {
+  width: 100%;
+  display: flex;
+  justify-items: center;
+}
 .modal-content {
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 .movie-title {
   font-size: 28px;
@@ -322,8 +384,6 @@ input::placeholder {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
-  border-bottom: 1px solid #4a5568;
-  padding-bottom: 20px;
 }
 .rating-label {
   margin-right: 10px;
@@ -342,10 +402,13 @@ input::placeholder {
   font-size: 18px;
   font-weight: bold;
 }
+#starRatingFormBox {
+  width: 100%;
+}
 .my-rating-section {
-  margin-top: 10px;
+  width: 100%;
+  padding: 20px 0;
   border-bottom: 1px solid #4a5568;
-  padding-bottom: 20px;
 }
 .my-rating-title {
   font-size: 18px;
@@ -394,7 +457,7 @@ input::placeholder {
   margin-left: 5px;
 }
 .synopsis-section {
-  margin-top: 20px;
+  padding: 20px 0;
 }
 .synopsis-title {
   font-size: 18px;
@@ -410,19 +473,25 @@ input::placeholder {
   -webkit-line-clamp: 6;
   -webkit-box-orient: vertical;
 }
-@media (max-width: 768px) {
-  .modal {
-    flex-direction: column;
-  }
-
-  .modal-image {
-    height: 200px;
-  }
-}
 .modal-image {
-  width: 400px;
+  height: 200px;
   border-radius: 16px;
   overflow: hidden;
+  display: flex; /* 이미지 가운데 정렬시 유용 */
+  justify-content: center;
+  align-items: center;
+}
+.modal-image img {
+  height: 100%; /* 부모 높이에 맞춤 */
+  width: auto; /* 비율 유지 */
+  object-fit: contain; /* 또는 cover, 상황에 따라 */
+}
+.movie-content-title-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: 1px solid #4a5568;
 }
 .poster-image {
   width: 100%;
@@ -435,6 +504,51 @@ input::placeholder {
 }
 .sm-star-box p {
   line-height: 1;
+}
+@media (min-width: 1024px) {
+  .modal-dialog {
+    position: fixed;
+    background-color: #2d3748;
+    width: 90%;
+    max-width: 1000px;
+    overflow: hidden;
+    color: white;
+    border-radius: 16px;
+    max-height: calc(100% - 2em - 6px);
+    margin: auto;
+  }
+
+  .modal-container {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .modal-image {
+    height: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .modal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .poster-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .modal-content {
+    align-items: flex-start;
+  }
+
+  .movie-content-title-box {
+    align-items: flex-start;
+  }
 }
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
@@ -577,6 +691,22 @@ dialog:focus {
   outline: none;
   border: none;
 }
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+input:-webkit-autofill,
+input:focus,
+input:autofill:active {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  background: transparent;
+  box-shadow: 0 0 0px 1000px transparent inset;
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  box-shadow: 0 0 0px 1000px transparent inset;
+  -webkit-text-fill-color: inherit;
+}
 .tab {
   display: flex;
   margin: 32px 0;
@@ -604,6 +734,7 @@ dialog:focus {
   margin-right: 8px;
 }
 .thumbnail-list {
+  width: 100%;
   margin: 0 auto 56px;
   display: grid;
   grid-template-columns: repeat(5, 200px);
@@ -621,7 +752,7 @@ dialog:focus {
 .item-desc > *:not(:last-child) {
   margin-bottom: 4px;
   line-height: 1.2rem;
-  position:relative;
+  position: relative;
 }
 p.rate {
   display: flex;
@@ -634,6 +765,37 @@ p.rate > span {
 .item .star {
   width: 16px;
   top: 1px;
+}
+.thumbnail-list {
+  width: 100%;
+  margin: 0 auto 56px;
+  display: grid;
+  grid-template-columns: repeat(1, 200px); /* 기본: 모바일 1열 */
+  gap: 70px;
+  justify-content: center;
+}
+@media (min-width: 520px) {
+  .thumbnail-list {
+    grid-template-columns: repeat(2, 200px);
+  }
+}
+/* 태블릿 이상 (768px~): 2열 */
+@media (min-width: 768px) {
+  .thumbnail-list {
+    grid-template-columns: repeat(3, 200px);
+  }
+}
+/* 데스크탑 이상 (1024px~): 4열 */
+@media (min-width: 1024px) {
+  .thumbnail-list {
+    grid-template-columns: repeat(4, 200px);
+  }
+}
+/* 4K 데스크탑 이상 (1440px~): 5열 */
+@media (min-width: 1440px) {
+  .thumbnail-list {
+    grid-template-columns: repeat(5, 200px);
+  }
 }
 .text-xl {
     font-size: 36px;
