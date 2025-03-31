@@ -208,6 +208,7 @@ header {
 }
 .search-input-box {
   width: 100%;
+  //position: absolute;
   max-width: 525px;
   height: 36px;
 
@@ -219,6 +220,7 @@ header {
   border-radius: 100px;
 
   padding: 6px 16px;
+  z-index: 500;
 }
 input {
   width: 100%;
@@ -293,7 +295,7 @@ input::placeholder {
   background: linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
 }
 .top-rated-movie {
-  z-index: 3;
+  z-index: 1;
   width: 100%;
   max-width: 1440px;
 }
