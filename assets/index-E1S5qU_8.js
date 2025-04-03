@@ -35,22 +35,55 @@
     fetch(link.href, fetchOpts);
   }
 })();
+const getHTML = (id) => document.getElementById(id);
+const createElement = ({ tag, id, className }) => {
+  const element = document.createElement(tag);
+  if (id) element.id = id;
+  if (className) element.className = className;
+  return element;
+};
 function Input({ placeholder, eventName, id }) {
   return `
         <input type="text" id="${id}" name="${id}" placeholder="${placeholder}"></input>
     `;
 }
-function SearchForm() {
-  return `
-    <form class="search-input-box" id="searchForm">
-        ${Input({ placeholder: "검색어를 입력하세요", id: "searchInput" })}
-        <button type="submit">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M14 14L10 10M11.3333 6.66667C11.3333 9.244 9.244 11.3333 6.66667 11.3333C4.08934 11.3333 2 9.244 2 6.66667C2 4.08934 4.08934 2 6.66667 2C9.244 2 11.3333 4.08934 11.3333 6.66667Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </button>
-    </form>
-    `;
+async function SearchForm(targetId) {
+  const formId = "searchForm";
+  let searchCallback = () => {
+  };
+  function onSearch(callback) {
+    searchCallback = callback;
+  }
+  function getSearchData(event) {
+    event.preventDefault();
+    const form = getHTML(formId);
+    const formData = new FormData(form);
+    const searchKeyword = String(formData.get("searchInput"));
+    searchCallback(searchKeyword);
+  }
+  function setEvent() {
+    getHTML(formId).removeEventListener("submit", getSearchData);
+    getHTML(formId).addEventListener("submit", getSearchData);
+  }
+  function template() {
+    return `
+        <form class="search-input-box" id="${formId}">
+            ${Input({ placeholder: "검색어를 입력하세요", id: "searchInput" })}
+            <button type="submit">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 14L10 10M11.3333 6.66667C11.3333 9.244 9.244 11.3333 6.66667 11.3333C4.08934 11.3333 2 9.244 2 6.66667C2 4.08934 4.08934 2 6.66667 2C9.244 2 11.3333 4.08934 11.3333 6.66667Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </form>
+        `;
+  }
+  function render() {
+    const container = getHTML(targetId);
+    const searchFormtemplate = template();
+    container.innerHTML = searchFormtemplate;
+    setEvent();
+  }
+  return { render, onSearch };
 }
 function Header() {
   function template() {
@@ -59,7 +92,7 @@ function Header() {
         <a href="/javascript-movie-review/" class="header-logo">
             <img src="./images/logo.png" alt="MovieList" />
         </a>
-            ${SearchForm()}
+            <div id="headerSearchBox" class="header-search-box"></div>
             <img src="./images/logo.png" alt="MovieList" class="header-transparent-logo" />
         </div>
         <div id="headerBackground" class="header-background">
@@ -67,19 +100,80 @@ function Header() {
     `;
   }
   function render() {
-    document.querySelector("#headerSection").innerHTML = template();
+    getHTML("headerSection").innerHTML = template();
   }
   render();
 }
-const getHTML = (id) => document.getElementById(id);
-const createElement = ({ tag, id, className }) => {
-  const element = document.createElement(tag);
-  if (id) element.id = id;
-  if (className) element.className = className;
-  return element;
-};
+const BASE_URL = "https://api.themoviedb.org/3";
+async function fetchPopularMovies(pageIndex) {
+  const popularMovieUrl = `${BASE_URL}/movie/popular?language=ko-Kr&page=${pageIndex}`;
+  return await fetchUtil(popularMovieUrl);
+}
+async function fetchSearchMovies(pageIndex, searchKeyword) {
+  const searchMovieUrl = `${BASE_URL}/search/movie?query=${searchKeyword}&include_adult=false&language=ko-KR&page=${pageIndex}`;
+  return await fetchUtil(searchMovieUrl);
+}
+async function fetchMovieDetail(movieId) {
+  const movieDetailUrl = `${BASE_URL}/movie/${movieId}?language=ko-KR`;
+  return await fetchUtilDetail(movieDetailUrl);
+}
+async function fetchUtil(url) {
+  const options = {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZjI0NmQ4NjBkMzVhYzU4Y2JiZWJmYmI5YWYzMzI5NyIsIm5iZiI6MTc0MjI3MzI2OS41MDU5OTk4LCJzdWIiOiI2N2Q4ZmFmNTU2MmU4MzJjOTczNjU2M2IiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.1Za7XiZLt45UFW6Er46E0FGESgxaxjmrk1U5x0FIrAo"}`
+    }
+  };
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    alert("서버와의 연결이 끊어졌습니다");
+    return;
+  }
+  const { results, total_pages } = await response.json();
+  return { results, total_pages };
+}
+async function fetchUtilDetail(url) {
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZjI0NmQ4NjBkMzVhYzU4Y2JiZWJmYmI5YWYzMzI5NyIsIm5iZiI6MTc0MjI3MzI2OS41MDU5OTk4LCJzdWIiOiI2N2Q4ZmFmNTU2MmU4MzJjOTczNjU2M2IiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.1Za7XiZLt45UFW6Er46E0FGESgxaxjmrk1U5x0FIrAo"}`
+    }
+  });
+  if (!response.ok) {
+    alert("서버와의 연결이 끊어졌습니다");
+    throw new Error("Failed to fetch detail");
+  }
+  return await response.json();
+}
 function roundRating(value) {
   return Math.round(value * 10) / 10;
+}
+function Button({ content, ...rest }) {
+  const attributes = Object.entries(rest).map(([key, value]) => `${key}="${value}"`).join(" ");
+  return `
+        <button class="primary detail" ${attributes}>${content}</button>
+    `;
+}
+function Banner(data) {
+  return `
+    <div class="background-container" style="background-image: url('./images/banner_poster_insideout2.jpg');">
+        <div class="overlay" aria-hidden="true"></div>
+          <div class="top-rated-movie">
+            <div class="banner-logo-box">
+              <img src="./images/banner_logo_insideout2.png" />
+            </div>
+            <div class="rate">
+              <img src="./images/star_empty.png" class="star" />
+              <span class="rate-value">7.6</span>
+            </div>
+            <div class="title">인사이드 아웃2</div>
+
+            ${Button({ content: "자세히 보기", class: "primary detail", style: "width: 120px;" })}
+            
+          </div>
+        </div>
+      </div>
+    `;
 }
 function StarIcon({ isFilled, type, rating }) {
   const starSvg = `
@@ -133,47 +227,6 @@ function MovieItem({ id, img, rating, title }) {
     return li;
   }
   return { template, getId: () => movieId };
-}
-const BASE_URL = "https://api.themoviedb.org/3";
-async function fetchPopularMovies(pageIndex) {
-  const popularMovieUrl = `${BASE_URL}/movie/popular?language=ko-Kr&page=${pageIndex}`;
-  return await fetchUtil(popularMovieUrl);
-}
-async function fetchSearchMovies(pageIndex, searchKeyword) {
-  const searchMovieUrl = `${BASE_URL}/search/movie?query=${searchKeyword}&include_adult=false&language=ko-KR&page=${pageIndex}`;
-  return await fetchUtil(searchMovieUrl);
-}
-async function fetchMovieDetail(movieId) {
-  const movieDetailUrl = `${BASE_URL}/movie/${movieId}?language=ko-KR`;
-  return await fetchUtilDetail(movieDetailUrl);
-}
-async function fetchUtil(url) {
-  const options = {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZjI0NmQ4NjBkMzVhYzU4Y2JiZWJmYmI5YWYzMzI5NyIsIm5iZiI6MTc0MjI3MzI2OS41MDU5OTk4LCJzdWIiOiI2N2Q4ZmFmNTU2MmU4MzJjOTczNjU2M2IiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.1Za7XiZLt45UFW6Er46E0FGESgxaxjmrk1U5x0FIrAo"}`
-    }
-  };
-  const response = await fetch(url, options);
-  if (!response.ok) {
-    alert("서버와의 연결이 끊어졌습니다");
-    return;
-  }
-  const { results, total_pages } = await response.json();
-  return { results, total_pages };
-}
-async function fetchUtilDetail(url) {
-  const response = await fetch(url, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5ZjI0NmQ4NjBkMzVhYzU4Y2JiZWJmYmI5YWYzMzI5NyIsIm5iZiI6MTc0MjI3MzI2OS41MDU5OTk4LCJzdWIiOiI2N2Q4ZmFmNTU2MmU4MzJjOTczNjU2M2IiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.1Za7XiZLt45UFW6Er46E0FGESgxaxjmrk1U5x0FIrAo"}`
-    }
-  });
-  if (!response.ok) {
-    alert("서버와의 연결이 끊어졌습니다");
-    throw new Error("Failed to fetch detail");
-  }
-  return await response.json();
 }
 function createStorage(key, storage = window.localStorage) {
   function getStorage() {
@@ -545,76 +598,34 @@ function MovieLayout(movieData) {
   }
   return { render, replaceChildren };
 }
-async function submitEvent(movieLayout) {
-  document.addEventListener("submit", onSubmit.bind(this));
-  async function getSearchData(event, form) {
-    event.preventDefault();
-    const formData = new FormData(form);
-    const searchKeyword = String(formData.get("searchInput"));
-    const { results: searchData, total_pages } = await fetchSearchMovies(1, searchKeyword);
-    movieLayout.replaceChildren({
-      title: `"${searchKeyword}" 검색 결과`,
-      movieData: searchData,
-      isPossibleMore: searchData.length === 20,
-      searchKeyword,
-      totalPages: total_pages
-    });
-  }
-  async function onSubmit(event) {
-    var _a;
-    event.preventDefault();
-    const form = event.target;
-    if (!form) return;
-    if (form.id === "searchForm") {
-      await getSearchData(event, form);
-    }
-    (_a = document.getElementById("bannerSection")) == null ? void 0 : _a.setAttribute("style", "display: none");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    form.reset();
-  }
-}
-function Button({ content, ...rest }) {
-  const attributes = Object.entries(rest).map(([key, value]) => `${key}="${value}"`).join(" ");
-  return `
-        <button class="primary detail" ${attributes}>${content}</button>
-    `;
-}
-function Banner(data) {
-  return `
-    <div class="background-container" style="background-image: url('./images/banner_poster_insideout2.jpg');">
-        <div class="overlay" aria-hidden="true"></div>
-          <div class="top-rated-movie">
-            <div class="banner-logo-box">
-              <img src="./images/banner_logo_insideout2.png" />
-            </div>
-            <div class="rate">
-              <img src="./images/star_empty.png" class="star" />
-              <span class="rate-value">7.6</span>
-            </div>
-            <div class="title">인사이드 아웃2</div>
-
-            ${Button({ content: "자세히 보기", class: "primary detail", style: "width: 120px;" })}
-            
-          </div>
-        </div>
-      </div>
-    `;
-}
-(async () => {
-  history.scrollRestoration = "manual";
+history.scrollRestoration = "manual";
+Header();
+async function main() {
   const movieData = await fetchPopularMovies(1);
   const movieLayout = MovieLayout(movieData.results);
   const bannerElement = document.getElementById("bannerSection");
-  if (bannerElement) bannerElement.innerHTML = Banner(movieData.results[0]);
-  await submitEvent(movieLayout);
-  Header();
-  window.addEventListener("scroll", () => {
-    const headerBack = document.querySelector("#headerBackground");
-    if (!headerBack) return;
-    if (window.scrollY > 400) {
-      headerBack.classList.add("scrolled");
-    } else {
-      headerBack.classList.remove("scrolled");
-    }
+  if (bannerElement) bannerElement.innerHTML = Banner();
+  const searchForm = await SearchForm("headerSearchBox");
+  searchForm.render();
+  searchForm.onSearch(async (keyword) => {
+    const { results, total_pages } = await fetchSearchMovies(1, keyword);
+    bannerElement == null ? void 0 : bannerElement.setAttribute("style", "display: none");
+    movieLayout.replaceChildren({
+      title: `"${keyword}" 검색 결과`,
+      movieData: results,
+      isPossibleMore: results.length === 20,
+      searchKeyword: keyword,
+      totalPages: total_pages
+    });
   });
-})();
+}
+main();
+window.addEventListener("scroll", () => {
+  const headerBack = document.querySelector("#headerBackground");
+  if (!headerBack) return;
+  if (window.scrollY > 400) {
+    headerBack.classList.add("scrolled");
+  } else {
+    headerBack.classList.remove("scrolled");
+  }
+});
